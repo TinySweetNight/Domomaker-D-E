@@ -9,14 +9,25 @@ const handleDomo = (e, onDomoAdded) => {
 
     const name = e.target.querySelector('#domoName').value;
     const age = e.target.querySelector('#domoAge').value;
+    const food = e.target.querySelector('#domoFood').value;
 
     if(!name || !age) {
         helper.handleError('All fields are required');
         return false;
     }
 
-    helper.sendPost(e.target.action, {name, age}, onDomoAdded);
+    helper.sendPost(e.target.action, {name, age, food}, onDomoAdded);
     return false;
+}
+
+const deleteDomo = async (id, onDomoDeleted) => {
+     await fetch('/deleteDomo', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id }),
+  });
+
+  onDomoDeleted();
 }
 
 const DomoForm = (props) => {
@@ -30,6 +41,8 @@ const DomoForm = (props) => {
             >
                 <label htmlFor="name">Name:</label>
                 <input id="domoName" type="text" name="name" placeholder="Domo Name"/>
+                <label htmlFor="food">Favorite Food:</label>
+                <input id="domoFood" type="text" name="food" placeholder= "Favorite food"/>
                 <label htmlFor="age">Age:</label>
                 <input id="domoAge" type="number" min="0" name="age"/>
                 <input className="makeDomoSubmit" type="submit" value="Make Domo"/>
@@ -37,6 +50,7 @@ const DomoForm = (props) => {
     )
 
 }
+
 
 const DomoList = (props) => {
     const [domos, setDomos] = useState(props.domos);
@@ -64,6 +78,8 @@ const DomoList = (props) => {
                 <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" />
                 <h3 className="domoName">Name: {domo.name}</h3>
                 <h3 className= "domoAge">Age: {domo.age}</h3>
+                <h3 className= "domoFood">Favorite Food: {domo.food}</h3>
+                 <button onClick={() => deleteDomo(domo._id, props.triggerReload)}>Delete</button> 
             </div>
         );
     });
@@ -84,7 +100,7 @@ const App = () => {
                 <DomoForm triggerReload={()=> setReloadDomos(!reloadDomos)}/>
             </div>
             <div id="domos">
-                <DomoList domos={[]} reloadDomos={reloadDomos}/>
+                <DomoList domos={[]} reloadDomos={reloadDomos} triggerReload={() => setReloadDomos(!reloadDomos)}/>
             </div>
         </div>
     );
