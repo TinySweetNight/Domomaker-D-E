@@ -48,6 +48,7 @@ const deleteDomo = async (req, res) => {
         
         return res.status(200).json({message: 'Domo deleted'});
     } catch (err) {
+        console.log(err);
         return res.status(500).json({error: 'Error deleting Domo'});
     }
 }
